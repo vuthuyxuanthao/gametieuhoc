@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bác sĩ máy tính</title>
+<style>
+:root{
+  --bg:#F3F7FC; --card:#FFFFFF; --ink:#1F2A44; --muted:#55607A;
+  --blue:#2F6FD6; --blue-soft:#E3EEFF; --green:#237A52; --green-soft:#E2F5EA;
+  --red:#C2385A; --red-soft:#FFE5EC; --orange:#C26A12; --yellow:#FFE08A;
+  --line:#D5DEEC;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Segoe UI",Tahoma,sans-serif}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:1080px;margin:0 auto;padding:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.brand{font-size:26px;font-weight:800;color:var(--blue)}
+.brand span{color:var(--red)}
+.score{display:flex;gap:10px;flex-wrap:wrap}
+.pill{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:700;font-size:17px}
+.pill.on{border-color:var(--blue);background:var(--blue-soft)}
+.card{background:var(--card);border-radius:18px;padding:20px;box-shadow:0 2px 0 var(--line)}
+.center{text-align:center}
+h1{font-size:34px;margin:6px 0 10px}
+h2{font-size:24px;margin:4px 0 10px}
+p{font-size:19px;line-height:1.5;margin:6px 0}
+.big{font-size:20px}
+input[type=text]{font-size:22px;padding:10px 14px;border:2px solid var(--line);border-radius:12px;width:100%;max-width:420px;font-family:Arial,sans-serif}
+input[type=text]:focus{outline:none;border-color:var(--blue)}
+.btn{border:none;border-radius:14px;padding:12px 22px;font-size:20px;font-weight:700;background:var(--blue);color:#fff}
+.btn.alt{background:var(--card);color:var(--blue);border:2px solid var(--blue)}
+.btn.green{background:var(--green)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.steps{display:flex;gap:8px;margin:6px 0 14px;flex-wrap:wrap}
+.step{flex:1;min-width:150px;text-align:center;padding:8px;border-radius:12px;background:#EEF2F8;color:var(--muted);font-weight:700;font-size:16px}
+.step.now{background:var(--yellow);color:var(--ink)}
+.step.done{background:var(--green-soft);color:var(--green)}
+.who{background:var(--blue-soft);border-radius:12px;padding:10px 14px;font-size:18px;margin-bottom:12px}
+.story{background:var(--red-soft);border-left:6px solid var(--red);border-radius:12px;padding:12px 16px;font-size:20px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.opt{background:var(--card);border:3px solid var(--line);border-radius:14px;padding:14px;font-size:18px;font-weight:700;text-align:left;color:var(--ink)}
+.opt:hover{border-color:var(--blue)}
+.opt.ok{border-color:var(--green);background:var(--green-soft)}
+.opt.bad{border-color:var(--red);background:var(--red-soft)}
+.msg{min-height:30px;font-size:19px;font-weight:700;margin-top:10px}
+.msg.ok{color:var(--green)} .msg.bad{color:var(--red)}
+.shake{animation:sh .35s}
+@keyframes sh{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+/* mock computer */
+.pc{border:3px solid #9AA7BD;border-radius:12px;overflow:hidden;background:#fff;user-select:none}
+.titlebar{background:#C43E1C;color:#fff;font-weight:700;padding:6px 12px;font-size:15px;display:flex;justify-content:space-between}
+.ribbon{background:#F4F4F4;border-bottom:1px solid #ddd;padding:8px 12px;display:flex;gap:10px;align-items:center;font-size:15px;position:relative}
+.fontbox{border:2px solid #bbb;background:#fff;padding:4px 10px;min-width:150px;border-radius:6px;font-weight:700}
+.fontbox.click{cursor:pointer}
+.fontlist{position:absolute;top:44px;left:72px;background:#fff;border:2px solid #999;border-radius:8px;z-index:5;box-shadow:0 4px 10px rgba(0,0,0,.15)}
+.fontlist div{padding:8px 16px;font-size:16px;cursor:pointer}
+.fontlist div:hover{background:var(--blue-soft)}
+.slide{height:170px;display:flex;align-items:center;justify-content:center;background:#FFFDF6;font-size:34px;font-weight:700;padding:10px;text-align:center}
+.taskbar{background:#20304A;color:#fff;display:flex;justify-content:flex-end;align-items:center;gap:14px;padding:6px 14px;position:relative;font-size:15px}
+.ime{background:#fff;color:#C00000;font-weight:900;border-radius:6px;width:34px;height:30px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;border:2px solid transparent}
+.ime:hover{border-color:var(--yellow)}
+.imemenu{position:absolute;bottom:44px;right:60px;background:#fff;color:var(--ink);border:2px solid #999;border-radius:8px;z-index:5;min-width:170px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.imemenu div{padding:9px 14px;font-size:16px;cursor:pointer}
+.imemenu div:hover{background:var(--blue-soft)}
+.imemenu .sel{font-weight:700}
+.kb{background:#E9EDF3;padding:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.key{background:#fff;border:2px solid #B9C3D3;border-radius:8px;min-width:46px;height:44px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;cursor:pointer;padding:0 8px;position:relative}
+.key:hover{border-color:var(--blue)}
+.key.wide{min-width:96px}.key.space{min-width:260px}
+.led{width:8px;height:8px;border-radius:50%;background:#CCC;position:absolute;top:5px;right:6px}
+.led.on{background:#2ECC40;box-shadow:0 0 6px #2ECC40}
+.hintbox{background:#FFF7DA;border:2px dashed var(--orange);border-radius:12px;padding:10px 14px;font-size:18px;margin-top:10px}
+.cert{border:6px double var(--blue);border-radius:18px;padding:24px;background:linear-gradient(135deg,#FFF6E5,#E6F1FF)}
+.stars{font-size:30px;letter-spacing:2px}
+table.res{border-collapse:collapse;margin:10px auto;font-size:19px}
+table.res td,table.res th{border:2px solid var(--line);padding:8px 16px}
+.protocol{text-align:left;max-width:640px;margin:10px auto;background:var(--green-soft);border-radius:14px;padding:12px 18px}
+.protocol li{font-size:19px;margin:6px 0}
+.small{font-size:15px;color:var(--muted)}
+@media (max-width:640px){.slide{font-size:24px}.key.space{min-width:120px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">🩺 Bác sĩ <span>máy tính</span></div>
+    <div class="score" id="scorebar"></div>
+  </div>
+  <div id="app"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var DIAG=[
+ {id:"caps", t:"🔊 Máy hét to – phím Caps Lock đang bật"},
+ {id:"ime",  t:"🤐 Máy quên tiếng Việt – bộ gõ đang ở chữ E"},
+ {id:"font", t:"🔣 Chữ biến thành kí hiệu – sai phông chữ"},
+ {id:"vni",  t:"🗣️ Máy nói sai giọng – đang chọn kiểu gõ VNI"},
+ {id:"shift",t:"🔠 Chưa biết viết hoa – cần dùng phím Shift"}
+];
+var CASES=[
+ {d:"caps", story:"Ca số 1: Bạn Lan gõ lời chúc nhưng chữ nào cũng hiện CHỮ HOA, trông như đang hét to!",
+  text:"CHÚC MỪNG THẦY CÔ", font:"Arial", ime:"V", mode:"Telex", caps:true,
+  fixTask:"Hãy bấm vào đúng chỗ trên máy để chữa bệnh cho máy của Lan.",
+  hint:"Nhìn xuống bàn phím: phím nào đang có đèn xanh sáng?",
+  target:"Chúc mừng thầy cô", fixed:"Chúc mừng thầy cô"},
+ {d:"ime", story:"Ca số 2: Bạn Nam gõ “Kinhs chucs thaayf coo” nhưng màn hình hiện y nguyên, không có dấu tiếng Việt.",
+  text:"Kinhs chucs thaayf coo", font:"Arial", ime:"E", mode:"Telex", caps:false,
+  fixTask:"Hãy bấm vào đúng chỗ trên máy để máy “nhớ” lại tiếng Việt.",
+  hint:"Nhìn góc dưới bên phải màn hình: biểu tượng bộ gõ đang là chữ gì?",
+  target:"Kính chúc thầy cô", fixed:"Kính chúc thầy cô"},
+ {d:"font", story:"Ca số 3: Bạn Mai gõ lời chúc rất cẩn thận, nhưng chữ lại biến thành toàn hình và kí hiệu lạ!",
+  text:"♏︎❍︎ ⍓︎♏︎◆︎ ⧫︎♒︎♋︎⍓︎ ♍︎□︎", font:"Wingdings", ime:"V", mode:"Telex", caps:false,
+  fixTask:"Hãy chọn đúng chỗ trên thanh công cụ để chữ hiện lại bình thường.",
+  hint:"Nhìn ô tên phông chữ trên thanh công cụ: đang là phông gì?",
+  target:"Em yêu thầy cô", fixed:"Em yêu thầy cô"},
+ {d:"vni", story:"Ca số 4 (ca khó): Biểu tượng bộ gõ vẫn là chữ V, nhưng bạn Huy gõ “aa” không ra “â”, gõ “s” không ra dấu sắc.",
+  text:"Bieets own thaayf coo", font:"Arial", ime:"V", mode:"VNI", caps:false,
+  fixTask:"Hãy nhấp CHUỘT PHẢI vào đúng chỗ để chọn lại kiểu gõ cho máy.",
+  hint:"Nhấp chuột phải vào biểu tượng bộ gõ (chữ V) ở góc dưới màn hình, rồi chọn kiểu gõ quen thuộc của lớp mình.",
+  target:"Biết ơn thầy cô", fixed:"Biết ơn thầy cô"},
+ {d:"shift", story:"Ca số 5: Bạn Thư muốn viết tên trường “Hùng Vương” nhưng chỉ gõ được “hùng vương”.",
+  text:"hùng vương", font:"Arial", ime:"V", mode:"Telex", caps:false,
+  fixTask:"Muốn viết hoa chữ cái đầu, em cần GIỮ phím nào trên bàn phím? Hãy bấm vào phím đó.",
+  hint:"Không phải Caps Lock nhé! Phím này có hình mũi tên chỉ lên, có ở cả hai bên bàn phím.",
+  target:"Hùng Vương", fixed:"Hùng Vương"}
+];
+var S={name:"",cls:"",score:0,i:0,step:0,first:true,start:0,hintUsed:false};
+var app=document.getElementById("app");
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function norm(s){s=(s||"").normalize?s.normalize("NFC"):s;return s.replace(/\s+/g," ").trim();}
+function bar(){
+  var b=document.getElementById("scorebar");
+  if(!S.name){b.innerHTML="";return;}
+  b.innerHTML='<div class="pill on">'+esc(S.name)+': '+S.score+' ⭐</div>'+
+   (S.step>0?'<div class="pill">Ca '+(S.i+1)+'/'+CASES.length+'</div>':'');
+}
+function shake(el){el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");}
+
+/* ---------- start ---------- */
+function startScreen(){
+  S.step=0;bar();
+  app.innerHTML='<div class="card center">'+
+   '<h1>🏥 Bệnh viện Máy tính</h1>'+
+   '<p class="big">Em là <b>BÁC SĨ</b> của Bệnh viện Máy tính! Có <b>5 ca bệnh</b> đang chờ em chữa.</p>'+
+   '<p class="big">Mỗi ca có 3 bước: <b>Khám bệnh → Chữa bệnh → Thử lại</b>. Làm đúng ngay lần đầu được ⭐ – tối đa 15 ⭐.</p>'+
+   '<div style="max-width:440px;margin:16px auto;text-align:left">'+
+   '<p>Họ và tên của em:</p><input type="text" id="p1" maxlength="30" placeholder="Ví dụ: Nguyễn Minh Anh">'+
+   '<p>Lớp:</p><input type="text" id="cl" maxlength="10" value="4/6">'+
+   '</div><button class="btn" id="go">Bắt đầu khám bệnh ▶</button>'+
+   '<div class="msg bad" id="m"></div></div>';
+  document.getElementById("go").onclick=function(){
+    var a=norm(document.getElementById("p1").value);
+    if(!a){document.getElementById("m").textContent="Em hãy nhập tên của mình nhé!";return;}
+    S.name=a;S.cls=norm(document.getElementById("cl").value);S.score=0;S.i=0;S.start=Date.now();
+    caseScreen(1);
+  };
+}
+/* ---------- mock PC ---------- */
+function pcHTML(c,st){
+  var shown=st.fixed?c.fixed:c.text;
+  var fam=st.font==="Wingdings"?'"Segoe UI Symbol",Arial':'Arial';
+  return '<div class="pc" id="pc">'+
+   '<div class="titlebar"><span>PowerPoint – Thiep_20-11.pptx</span><span>— ▢ ✕</span></div>'+
+   '<div class="ribbon"><span>Phông chữ:</span><div class="fontbox click" id="fontbox">'+esc(st.font)+' ▾</div><span>Cỡ: 36</span><span><b>B</b> <i>I</i> <u>U</u></span>'+
+   '<div class="fontlist" id="fontlist" style="display:none"><div data-f="Wingdings">Wingdings</div><div data-f="Arial">Arial</div><div data-f="Times New Roman">Times New Roman</div></div></div>'+
+   '<div class="slide" style="font-family:'+fam+'">'+esc(shown)+'</div>'+
+   '<div class="taskbar"><span>🔊</span><span>📶</span><div class="ime" id="ime" title="Bộ gõ tiếng Việt">'+st.ime+'</div><span>10:15</span>'+
+   '<div class="imemenu" id="imemenu" style="display:none"><div data-m="Telex" class="'+(st.mode==="Telex"?"sel":"")+'">'+(st.mode==="Telex"?"✔ ":"")+'Kiểu gõ Telex</div><div data-m="VNI" class="'+(st.mode==="VNI"?"sel":"")+'">'+(st.mode==="VNI"?"✔ ":"")+'Kiểu gõ VNI</div><div data-m="VIQR">Kiểu gõ VIQR</div><div data-m="E">Chuyển sang E (tiếng Anh)</div></div></div>'+
+   '<div class="kb">'+
+    '<div class="key wide" data-k="caps">Caps Lock<span class="led'+(st.caps?' on':'')+'"></span></div>'+
+    '<div class="key wide" data-k="shift">⇧ Shift</div><div class="key" data-k="ctrl">Ctrl</div><div class="key" data-k="alt">Alt</div>'+
+    '<div class="key space" data-k="space">Phím cách</div><div class="key" data-k="enter">Enter ↵</div><div class="key wide" data-k="shift">⇧ Shift</div>'+
+   '</div></div>';
+}
+function steps(n){
+  var L=["1. Khám bệnh","2. Chữa bệnh","3. Thử lại"];
+  return '<div class="steps">'+L.map(function(t,k){return '<div class="step'+(k+1<n?' done':(k+1===n?' now':''))+'">'+t+'</div>';}).join("")+'</div>';
+}
+function head(c,n){
+  return steps(n)+'<div class="who">👩‍⚕️ Bác sĩ trực: <b>'+esc(S.name)+'</b></div>'+
+   '<div class="story">🚑 '+esc(c.story)+'</div>';
+}
+/* ---------- step 1: diagnose ---------- */
+function caseScreen(n){
+  var c=CASES[S.i];S.step=n;S.first=true;bar();
+  var st={font:c.font,ime:c.ime,mode:c.mode,caps:c.caps,fixed:false};
+  if(n===1){
+    app.innerHTML='<div class="card">'+head(c,1)+pcHTML(c,st)+
+     '<h2 style="margin-top:14px">Máy bị bệnh gì? Em hãy chọn chẩn đoán:</h2><div class="grid" id="opts">'+
+     DIAG.map(function(d){return '<button class="opt" data-d="'+d.id+'">'+esc(d.t)+'</button>';}).join("")+
+     '</div><div class="msg" id="m"></div></div>';
+    lockPC();
+    Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(b){
+      b.onclick=function(){
+        var m=document.getElementById("m");
+        if(b.getAttribute("data-d")===c.d){
+          b.classList.add("ok");
+          if(S.first){S.score++;}
+          m.className="msg ok";m.textContent=S.first?"✅ Chẩn đoán chính xác! +1 ⭐":"✅ Đúng rồi! (lần sau cố gắng đúng ngay từ đầu nhé)";
+          disableOpts();bar();
+          setTimeout(function(){fixScreen(c,st);},1300);
+        }else{
+          S.first=false;b.classList.add("bad");b.disabled=true;shake(b);
+          m.className="msg bad";m.textContent="❌ Chưa đúng. Em hãy nhìn kĩ màn hình rồi chọn lại nhé!";
+        }
+      };
+    });
+  }
+}
+function disableOpts(){Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(b){b.disabled=true;});}
+function lockPC(){var pc=document.getElementById("pc");pc.style.pointerEvents="none";}
+/* ---------- step 2: fix ---------- */
+function fixScreen(c,st){
+  S.step=2;S.first=true;bar();
+  function render(){
+    app.innerHTML='<div class="card">'+head(c,2)+'<h2>'+esc(c.fixTask)+'</h2>'+pcHTML(c,st)+
+     '<div class="row" style="margin-top:12px"><button class="btn alt" id="hint">💡 Xem gợi ý</button></div>'+
+     '<div id="hb"></div><div class="msg" id="m"></div></div>';
+    document.getElementById("hint").onclick=function(){document.getElementById("hb").innerHTML='<div class="hintbox">💡 '+esc(c.hint)+'</div>';};
+    wire();
+  }
+  function wrong(el,txt){
+    S.first=false;var m=document.getElementById("m");m.className="msg bad";m.textContent=txt||"❌ Chưa đúng chỗ rồi, thử lại nhé!";shake(el||document.getElementById("pc"));
+  }
+  function success(){
+    st.fixed=true;
+    if(S.first)S.score++;
+    render();
+    var m=document.getElementById("m");m.className="msg ok";
+    m.textContent=S.first?"✅ Chữa bệnh thành công! +1 ⭐":"✅ Chữa bệnh thành công!";
+    document.getElementById("pc").style.pointerEvents="none";bar();
+    setTimeout(function(){tryScreen(c);},1600);
+  }
+  function wire(){
+    var ime=document.getElementById("ime"),menu=document.getElementById("imemenu"),fb=document.getElementById("fontbox"),fl=document.getElementById("fontlist");
+    document.getElementById("pc").onclick=function(e){
+      if(e.target.closest&&(e.target.closest("#imemenu")||e.target.closest("#fontlist")||e.target.closest("#fontbox")||e.target.closest("#ime")||e.target.closest(".key")))return;
+      menu.style.display="none";fl.style.display="none";
+    };
+    ime.onclick=function(e){
+      e.stopPropagation();menu.style.display="none";
+      if(c.d==="ime"){st.ime="V";success();}
+      else if(c.d==="vni"){wrong(ime,"❌ Bấm chuột trái chỉ đổi V ↔ E thôi. Kiểu gõ cần chọn bằng chuột PHẢI!");}
+      else wrong(ime);
+    };
+    ime.oncontextmenu=function(e){
+      e.preventDefault();e.stopPropagation();
+      if(c.d==="vni"){menu.style.display="block";}else{wrong(ime);}
+    };
+    Array.prototype.forEach.call(menu.querySelectorAll("div"),function(it){
+      it.onclick=function(e){e.stopPropagation();var v=it.getAttribute("data-m");menu.style.display="none";
+        if(v==="Telex"){st.mode="Telex";success();}else wrong(ime,"❌ Chưa đúng kiểu gõ lớp mình dùng. Thử lại nhé!");};
+    });
+    fb.onclick=function(e){
+      e.stopPropagation();
+      if(c.d==="font"){fl.style.display=fl.style.display==="none"?"block":"none";}else wrong(fb);
+    };
+    Array.prototype.forEach.call(fl.querySelectorAll("div"),function(it){
+      it.onclick=function(e){e.stopPropagation();var f=it.getAttribute("data-f");fl.style.display="none";
+        if(f==="Arial"||f==="Times New Roman"){st.font=f;success();}else wrong(fb,"❌ Vẫn là phông kí hiệu! Chọn phông khác nhé.");};
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".key"),function(k){
+      k.onclick=function(e){e.stopPropagation();var v=k.getAttribute("data-k");
+        if(c.d==="caps"&&v==="caps"){st.caps=false;success();}
+        else if(c.d==="shift"&&v==="shift"){success();}
+        else if(c.d==="shift"&&v==="caps"){wrong(k,"❌ Caps Lock sẽ làm cả chữ thành HOA. Chỉ cần viết hoa chữ cái đầu thôi!");}
+        else wrong(k);};
+    });
+  }
+  render();
+}
+/* ---------- step 3: real typing ---------- */
+function tryScreen(c){
+  S.step=3;S.first=true;bar();
+  app.innerHTML='<div class="card">'+head(c,3)+
+   '<h2>Máy đã khỏe! Bây giờ em hãy gõ thử câu sau bằng kiểu gõ Telex trên máy thật:</h2>'+
+   '<p class="center" style="font-size:32px;font-weight:800;color:var(--blue);margin:14px 0">'+esc(c.target)+'</p>'+
+   '<div class="center"><input type="text" id="ty" autocomplete="off" spellcheck="false" placeholder="Gõ vào đây..."></div>'+
+   '<div class="center" style="margin-top:12px"><button class="btn green" id="ck">Kiểm tra ✔</button></div>'+
+   '<div class="msg center" id="m"></div>'+
+   '<p class="small center">Nếu gõ mãi không ra dấu: máy thật của em có thể đang “bị bệnh”! Hãy dùng phác đồ vừa học để tự chữa, hoặc giơ tay hỏi cô.</p></div>';
+  var ty=document.getElementById("ty");ty.focus();
+  function check(){
+    var m=document.getElementById("m");
+    if(norm(ty.value)===norm(c.target)){
+      if(S.first)S.score++;
+      m.className="msg ok center";m.textContent=S.first?"🎉 Tuyệt vời! Gõ chính xác! +1 ⭐":"🎉 Chính xác!";
+      document.getElementById("ck").disabled=true;ty.disabled=true;bar();
+      setTimeout(next,1500);
+    }else{
+      S.first=false;shake(ty);m.className="msg bad center";
+      var v=norm(ty.value);
+      if(v&&v.toUpperCase()===v&&v!==v.toLowerCase())m.textContent="❌ Chữ đang toàn chữ HOA – kiểm tra phím Caps Lock nhé!";
+      else if(/[a-z](s|f|r|x|j)\b/.test(v)||/aa|ee|oo|dd|uw|ow|aw/.test(v))m.textContent="❌ Chưa ra dấu tiếng Việt – kiểm tra bộ gõ đang ở chữ V và kiểu gõ Telex nhé!";
+      else m.textContent="❌ Chưa giống câu mẫu. Kiểm tra lại dấu và chữ hoa nhé!";
+    }
+  }
+  document.getElementById("ck").onclick=check;
+  ty.onkeydown=function(e){if(e.key==="Enter")check();};
+}
+function next(){S.i++;if(S.i<CASES.length)caseScreen(1);else endScreen();}
+/* ---------- end ---------- */
+function endScreen(){
+  S.step=0;bar();
+  var sec=Math.round((Date.now()-S.start)/1000),mm=Math.floor(sec/60),ss=sec%60;
+  function stars(n){var s="";for(var k=0;k<n;k++)s+="⭐";return s||"–";}
+  app.innerHTML='<div class="card center"><div class="cert">'+
+   '<h1>🏅 GIẤY KHEN BÁC SĨ MÁY TÍNH 🏅</h1>'+
+   '<p class="big">Bệnh viện Máy tính chúc mừng bác sĩ</p><h2 style="font-size:32px;color:var(--red)">'+esc(S.name)+'</h2>'+
+   '<p class="big">lớp <b>'+esc(S.cls||"……")+'</b> đã chữa khỏi <b>'+CASES.length+'</b> ca bệnh!</p>'+
+   '<p class="stars">'+stars(S.score)+'</p><p class="big"><b>'+S.score+'/15 sao</b> – '+(S.score>=13?'Bác sĩ xuất sắc! 🏆':(S.score>=9?'Bác sĩ giỏi! 👍':'Bác sĩ tập sự – cố gắng thêm nhé! 💪'))+'</p>'+
+   '<p>⏱️ Thời gian: '+mm+' phút '+ss+' giây</p><p class="small">Em hãy giơ tay báo cô số sao của mình nhé!</p></div>'+
+   '<div class="protocol"><h2>📋 Phác đồ 4 bước khám máy</h2><ol>'+
+   '<li>Quan sát xem chữ bị lỗi như thế nào.</li>'+
+   '<li>Biểu tượng bộ gõ có đang là chữ <b>V</b> không?</li>'+
+   '<li>Kiểu gõ có đang là <b>Telex</b> không? (chuột phải vào biểu tượng bộ gõ)</li>'+
+   '<li>Đèn <b>Caps Lock</b> có đang sáng không? Phông chữ có đúng không?</li></ol>'+
+   '<p>✋ Viết hoa chữ cái đầu: giữ phím <b>Shift</b> + chữ cái.</p></div>'+
+   '<div class="row" style="justify-content:center;margin-top:14px"><button class="btn" id="again">Chơi lại 🔁</button></div></div>';
+  document.getElementById("again").onclick=startScreen;
+}
+startScreen();
+})();
+</script>
+</body>
+</html>
