@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kho Trò Chơi Học Tập</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+html{background:linear-gradient(160deg,#bae6fd 0%,#e0f2fe 40%,#fef3c7 100%) fixed #e0f2fe}
+body{font-family:'Baloo 2','Segoe UI',Arial,sans-serif;color:#1e293b}
+button,input,select,textarea{font-family:inherit;font-size:inherit}
+button{cursor:pointer;border:none}
+[hidden]{display:none!important}
+a{color:inherit}
+.wrap{max-width:1360px;margin:0 auto;padding:18px 24px 40px}
+
+/* header */
+.hdr{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{width:64px;height:64px;border-radius:20px;background:#fff;display:grid;place-items:center;font-size:40px;box-shadow:0 5px 0 #93c5fd}
+.hdr h1{font-size:34px;font-weight:800;color:#0c4a6e;line-height:1.05}
+.hdr p{font-size:18px;color:#475569;font-weight:600}
+.hdr .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{background:#fff;border-radius:14px;padding:8px 16px;font-size:18px;font-weight:700;color:#0f172a;box-shadow:0 4px 0 #94a3b8;transition:transform .08s;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #94a3b8}
+.btn.green{background:#22c55e;color:#fff;box-shadow:0 4px 0 #15803d}
+.btn.blue{background:#3b82f6;color:#fff;box-shadow:0 4px 0 #1d4ed8}
+.btn.orange{background:#f97316;color:#fff;box-shadow:0 4px 0 #c2410c}
+.btn.red{background:#ef4444;color:#fff;box-shadow:0 4px 0 #b91c1c}
+.btn.sm{font-size:15px;padding:4px 10px;border-radius:10px;box-shadow:0 3px 0 #94a3b8}
+.btn.ghost{background:#f1f5f9;box-shadow:0 3px 0 #cbd5e1}
+
+/* toolbar */
+.toolbar{margin:18px 0 16px;background:#fff;border-radius:22px;padding:12px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;box-shadow:0 6px 0 rgba(15,23,42,.06)}
+.search{flex:1 1 260px;display:flex;align-items:center;gap:8px;background:#f1f5f9;border-radius:14px;padding:4px 14px}
+.search input{border:none;background:none;outline:none;font-size:19px;width:100%;padding:4px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chips b{font-size:16px;color:#64748b;margin-right:2px}
+.chip{background:#f1f5f9;border-radius:999px;padding:3px 14px;font-size:16px;font-weight:700;color:#334155}
+.chip.on{background:#0ea5e9;color:#fff}
+.count{font-size:17px;color:#475569;font-weight:700;margin:0 4px 10px}
+
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.card{background:#fff;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;box-shadow:0 6px 0 rgba(15,23,42,.08),0 10px 24px rgba(15,23,42,.08);transition:transform .15s}
+.card:hover{transform:translateY(-5px)}
+.thumb{height:130px;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 55%,#fff));display:grid;place-items:center;font-size:72px;position:relative}
+.thumb .new{position:absolute;top:10px;right:10px;background:#facc15;color:#713f12;font-size:15px;font-weight:800;border-radius:999px;padding:0 10px}
+.cbody{padding:12px 16px 6px;flex:1}
+.cbody h3{font-size:22px;font-weight:800;line-height:1.15;color:#0f172a}
+.cbody p{font-size:16px;color:#475569;line-height:1.35;margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;flex-wrap:wrap;gap:6px;padding:4px 16px 0}
+.meta span{font-size:14px;font-weight:700;background:#f1f5f9;border-radius:8px;padding:0 8px;color:#475569}
+.play{margin:12px 16px 16px;background:var(--c);color:#fff;border-radius:14px;text-align:center;font-size:20px;font-weight:800;padding:6px;box-shadow:0 4px 0 color-mix(in srgb,var(--c) 70%,#000)}
+.empty{text-align:center;padding:60px 20px;font-size:22px;color:#64748b;font-weight:600}
+.empty div{font-size:70px}
+
+/* player */
+#viewPlay{position:fixed;inset:0;background:#0f172a;display:flex;flex-direction:column;z-index:50}
+.pbar{height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 14px;background:#1e293b}
+.pbar h2{color:#fff;font-size:22px;font-weight:800;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbar .tmp{background:#facc15;color:#713f12;font-size:14px;font-weight:800;border-radius:8px;padding:0 8px}
+#frame{flex:1;width:100%;border:0;background:#fff}
+
+/* admin */
+.panel{background:#fff;border-radius:22px;padding:16px 20px;box-shadow:0 6px 0 rgba(15,23,42,.06);margin-top:16px}
+.panel h2{font-size:24px;font-weight:800;color:#0c4a6e;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.abar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.dirty{font-size:16px;font-weight:700;border-radius:10px;padding:2px 12px}
+.dirty.yes{background:#fef3c7;color:#92400e}
+.dirty.no{background:#dcfce7;color:#166534}
+.drop{margin-top:12px;border:3px dashed #93c5fd;border-radius:18px;padding:16px;text-align:center;font-size:18px;color:#1d4ed8;font-weight:700;background:#eff6ff;cursor:pointer;transition:background .15s}
+.drop.over{background:#dbeafe;border-color:#2563eb}
+.drop small{display:block;font-size:15px;color:#64748b;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th{text-align:left;font-size:14px;color:#64748b;font-weight:700;padding:6px 8px;border-bottom:2px solid #e2e8f0}
+td{padding:6px 8px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+tr.off td{opacity:.45}
+td .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:24px;background:color-mix(in srgb,var(--c) 25%,#fff)}
+td .t{font-weight:800;font-size:17px}
+td .u{font-size:13px;color:#64748b;word-break:break-all}
+td .warn{font-size:13px;color:#b45309;font-weight:700}
+.acts{display:flex;gap:4px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+.steps li{margin:0 0 6px 24px;font-size:17px;line-height:1.4}
+code{background:#f1f5f9;border-radius:6px;padding:0 6px;font-size:15px}
+label.f{display:block;font-size:15px;font-weight:700;color:#475569;margin:8px 0 2px}
+.in{width:100%;border:2px solid #e2e8f0;border-radius:12px;padding:6px 10px;font-size:17px;outline:none;background:#fff}
+.in:focus{border-color:#38bdf8}
+textarea.in{resize:vertical}
+.picks{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.picks button{background:#f1f5f9;border-radius:10px;font-size:22px;width:40px;height:40px}
+.picks .col{width:32px;height:32px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #e2e8f0}
+.picks .col.on{box-shadow:0 0 0 3px #0f172a}
+.checks{display:flex;gap:12px;flex-wrap:wrap;font-size:17px;font-weight:600}
+.checks input{width:18px;height:18px;vertical-align:-3px}
+
+/* modal + toast */
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;z-index:80;padding:16px}
+.mbox{background:#fff;border-radius:24px;padding:20px 24px;width:min(720px,100%);max-height:92vh;overflow:auto;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.mbox h3{font-size:26px;font-weight:800;color:#0c4a6e;margin-bottom:6px}
+.mfoot{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.pin{font-size:40px;letter-spacing:12px;text-align:center}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 22px;border-radius:14px;font-size:18px;font-weight:700;z-index:100;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:90vw;text-align:center}
+#exportBox textarea{font-family:Consolas,monospace;font-size:13px;height:220px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hdr">
+    <div class="logo">🎮</div>
+    <div><h1 id="siteTitle">Kho Trò Chơi Học Tập</h1><p id="siteSub"></p></div>
+    <div class="right">
+      <button class="btn" id="btnHome" hidden>🏠 Kho trò chơi</button>
+      <button class="btn" id="btnAdmin">⚙️ Quản lý</button>
+    </div>
+  </header>
+
+  <!-- STUDENT VIEW -->
+  <main id="viewHome">
+    <div class="toolbar">
+      <div class="search">🔍<input id="q" type="search" placeholder="Tìm trò chơi…" autocomplete="off"></div>
+      <div class="chips" id="gradeChips"></div>
+      <div class="chips" id="subjChips"></div>
+    </div>
+    <div class="count" id="count"></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden><div>🔎</div>Chưa có trò chơi nào phù hợp.</div>
+  </main>
+
+  <!-- ADMIN VIEW -->
+  <main id="viewAdmin" hidden>
+    <div class="panel">
+      <h2>⚙️ Quản lý trò chơi <span class="dirty" id="dirty"></span></h2>
+      <div class="abar">
+        <button class="btn green" id="aAdd">➕ Thêm trò chơi</button>
+        <button class="btn blue" id="aExport">💾 Xuất games.js</button>
+        <button class="btn ghost" id="aImport">📂 Nhập games.js</button>
+        <button class="btn ghost" id="aReset">↩ Hủy thay đổi</button>
+        <button class="btn ghost" id="aLock">🔒 Thoát quản lý</button>
+        <input type="file" id="importFile" accept=".js,.json" hidden>
+        <input type="file" id="htmlFiles" accept=".html,.htm" multiple hidden>
+      </div>
+      <div class="drop" id="drop">📥 Kéo thả các file game <b>.html</b> vào đây (hoặc bấm để chọn file)
+        <small>Có thể thêm nhiều game cùng lúc. Tên game lấy từ thẻ &lt;title&gt; của file, cô sửa lại sau.</small></div>
+    </div>
+
+    <div class="panel">
+      <h2>📋 Danh sách trò chơi <span style="font-size:16px;color:#64748b" id="aCount"></span></h2>
+      <table>
+        <thead><tr><th style="width:40px">#</th><th style="width:56px"></th><th>Trò chơi</th><th>Lớp</th><th>Môn</th><th style="width:300px">Thao tác</th></tr></thead>
+        <tbody id="aRows"></tbody>
+      </table>
+    </div>
+
+    <div class="panel" id="exportBox" hidden>
+      <h2>💾 Nội dung file games.js</h2>
+      <p style="font-size:16px;color:#475569;margin-bottom:6px">Nếu file không tự tải về, bấm <b>Sao chép</b>, mở file <code>games.js</code> trên GitHub, xóa hết và dán vào.</p>
+      <textarea class="in" id="exportText" readonly></textarea>
+      <div class="abar" style="margin-top:8px"><button class="btn blue" id="copyExport">📋 Sao chép</button><span id="pending" style="font-size:16px;color:#b45309;font-weight:700"></span></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h2>🚀 Đưa thay đổi lên site</h2>
+        <ol class="steps">
+          <li>Bấm <b>💾 Xuất games.js</b> để tải file danh sách mới.</li>
+          <li>Mở kho GitHub của site → thư mục <code>kho-game</code> → <b>Add file → Upload files</b>.</li>
+          <li>Kéo vào: file <code>games.js</code> (thay file cũ) và thư mục <code>games</code> chứa các game mới, mỗi game là <code>games/tên-game/index.html</code>.</li>
+          <li>Bấm <b>Commit changes</b>. Netlify tự cập nhật sau khoảng 1 phút, học sinh tải lại trang là thấy.</li>
+        </ol>
+        <p style="font-size:15px;color:#64748b;margin-top:6px">Thay đổi chưa xuất được lưu tạm trong trình duyệt máy này, tắt máy vẫn còn.</p>
+      </div>
+      <div class="panel">
+        <h2>🛠️ Cài đặt kho</h2>
+        <label class="f">Tên kho trò chơi</label><input class="in" id="sTitle">
+        <label class="f">Dòng giới thiệu</label><input class="in" id="sSub">
+        <label class="f">Các môn học (cách nhau bởi dấu phẩy)</label><input class="in" id="sSubj">
+        <label class="f">Mã PIN vào trang quản lý (để trống = không cần mã)</label><input class="in" id="sPin" style="max-width:200px">
+        <p style="font-size:14px;color:#64748b;margin-top:4px">Mã PIN chỉ để học sinh không bấm nhầm vào trang quản lý, không phải lớp bảo mật thật.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- PLAYER -->
+<div id="viewPlay" hidden>
+  <div class="pbar">
+    <button class="btn sm" id="pBack">← Quay lại</button>
+    <h2 id="pTitle"></h2>
+    <span class="tmp" id="pTmp" hidden>Chơi thử file tạm</span>
+    <button class="btn sm" id="pReload" title="Chơi lại">🔄</button>
+    <button class="btn sm" id="pFull" title="Toàn màn hình">⛶ Toàn màn hình</button>
+    <a class="btn sm" id="pNew" target="_blank" rel="noopener">↗ Mở tab mới</a>
+  </div>
+  <iframe id="frame" title="Trò chơi" allow="fullscreen; autoplay" allowfullscreen></iframe>
+</div>
+
+<!-- EDIT FORM -->
+<div class="modal" id="formBox" hidden>
+  <div class="mbox">
+    <h3 id="fHead">Thêm trò chơi</h3>
+    <label class="f">Tên trò chơi *</label><input class="in" id="fTitle">
+    <label class="f">Mô tả ngắn</label><textarea class="in" id="fDesc" rows="2"></textarea>
+    <label class="f">Đường dẫn tới game * <span style="font-weight:500">(thư mục trên site như <code>games/ten-game/</code>, hoặc địa chỉ đầy đủ https://…)</span></label>
+    <input class="in" id="fUrl">
+    <div id="fFileNote" style="font-size:15px;color:#b45309;font-weight:700;margin-top:4px"></div>
+    <div class="grid2" style="gap:12px">
+      <div>
+        <label class="f">Biểu tượng</label><input class="in" id="fIcon" style="width:80px;font-size:24px;text-align:center">
+        <div class="picks" id="iconPicks"></div>
+      </div>
+      <div>
+        <label class="f">Màu thẻ</label>
+        <div class="picks" id="colorPicks"></div>
+        <label class="f">Môn học</label><select class="in" id="fSubj"></select>
+      </div>
+    </div>
+    <label class="f">Dành cho lớp</label>
+    <div class="checks" id="fGrades"></div>
+    <label class="f">Từ khóa (cách nhau bởi dấu phẩy)</label><input class="in" id="fTags">
+    <label class="checks" style="margin-top:10px"><span><input type="checkbox" id="fHidden"> Ẩn trò chơi này với học sinh</span></label>
+    <div class="mfoot"><button class="btn ghost" id="fCancel">Hủy</button><button class="btn green" id="fSave">💾 Lưu</button></div>
+  </div>
+</div>
+
+<!-- PIN -->
+<div class="modal" id="pinBox" hidden>
+  <div class="mbox" style="width:min(420px,100%);text-align:center">
+    <h3>🔒 Nhập mã PIN</h3>
+    <p style="font-size:17px;color:#475569">Trang quản lý dành cho giáo viên</p>
+    <input class="in pin" id="pinIn" type="password" inputmode="numeric" maxlength="12" autocomplete="off">
+    <div class="mfoot" style="justify-content:center"><button class="btn ghost" id="pinCancel">Hủy</button><button class="btn green" id="pinOk">Vào quản lý</button></div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="modal" id="askBox" hidden>
+  <div class="mbox" style="width:min(460px,100%)">
+    <h3 id="askText"></h3>
+    <div class="mfoot"><button class="btn ghost" id="askNo">Không</button><button class="btn red" id="askYes">Đồng ý</button></div>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const plain=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d');
+const slug=s=>plain(s).replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'tro-choi';
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+const clone=o=>JSON.parse(JSON.stringify(o));
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}
+function ssGet(k){try{return sessionStorage.getItem(k)}catch(e){return null}}
+function ssSet(k,v){try{v==null?sessionStorage.removeItem(k):sessionStorage.setItem(k,v)}catch(e){}}
+let toastT=0;
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2800);}
+function ask(text){return new Promise(res=>{$('#askText').textContent=text;$('#askBox').hidden=false;
+  $('#askYes').onclick=()=>{$('#askBox').hidden=true;res(true)};$('#askNo').onclick=()=>{$('#askBox').hidden=true;res(false)};});}
+
+const ICONS=['🎮','⌨️','🖱️','🧮','🔢','🔤','📚','🧩','🤖','💻','🚀','🌏','🧪','🌱','🦋','🐢','🎨','🎵','⭐','🏆'];
+const COLORS=['#3b82f6','#0ea5e9','#14b8a6','#22c55e','#eab308','#f97316','#e11d48','#a855f7','#64748b'];
+const BASE={settings:{title:'Kho Trò Chơi Học Tập',subtitle:'Trò chơi học tập tạo bằng AI',pin:'1234',
+  subjects:['Tin học','Toán','Tiếng Việt','Tiếng Anh','Khoa học','Lịch sử và Địa lí','Đạo đức','Khác']},games:[]};
+
+function norm(d){
+  d=d||{};
+  const s=Object.assign({},BASE.settings,d.settings||{});
+  if(!Array.isArray(s.subjects)||!s.subjects.length)s.subjects=BASE.settings.subjects.slice();
+  const games=(Array.isArray(d.games)?d.games:[]).filter(g=>g&&g.title).map(g=>Object.assign(
+    {id:slug(g.title),title:'',desc:'',url:'',icon:'🎮',color:'#3b82f6',grades:[],subject:'Khác',tags:[],hidden:false,added:today()},g));
+  return {settings:s,games};
+}
+function cleanForExport(d){
+  return {settings:d.settings,games:d.games.map(g=>{const o={};for(const k in g)if(k[0]!=='_')o[k]=g[k];return o;})};
+}
+function loadScript(src){return new Promise(res=>{const sc=document.createElement('script');sc.src=src;sc.onload=()=>res(true);sc.onerror=()=>res(false);document.head.appendChild(sc);});}
+
+let pub=norm(BASE),draft=null,loaded=false;
+const temp={};          /* id -> blob URL of an HTML file dropped in this session */
+const filt={q:'',grade:0,subj:''};
+let playFrom='home',editIdx=-1,formColor=COLORS[0];
+
+/* ---------- views ---------- */
+function showView(v){
+  $('#viewHome').hidden=v!=='home';$('#viewAdmin').hidden=v!=='admin';$('#viewPlay').hidden=v!=='play';
+  $('#btnHome').hidden=v!=='admin';$('#btnAdmin').hidden=v==='admin';
+  document.body.style.overflow=v==='play'?'hidden':'';
+  if(v!=='play'){$('#frame').src='about:blank';}
+}
+function isAdmin(){return ssGet('kho_admin')==='1';}
+function route(){
+  const h=decodeURIComponent(location.hash.slice(1));
+  if(h.indexOf('play-')===0){
+    const id=h.slice(5);
+    const g=pub.games.find(x=>x.id===id)||(isAdmin()&&draft.games.find(x=>x.id===id));
+    if(g){openPlay(g);return;}
+  }
+  if(h==='quan-ly'){if(isAdmin()){renderAdmin();showView('admin');}else{askPin();showView('home');renderHome();}return;}
+  renderHome();showView('home');
+}
+addEventListener('hashchange',route);
+
+/* ---------- student view ---------- */
+function renderHome(){
+  const S=pub.settings;
+  $('#siteTitle').textContent=S.title;$('#siteSub').textContent=S.subtitle;document.title=S.title;
+  const vis=pub.games.filter(g=>!g.hidden);
+  $('#gradeChips').innerHTML='<b>Lớp:</b>'+[0,1,2,3,4,5].map(n=>'<button class="chip'+(filt.grade===n?' on':'')+'" data-grade="'+n+'">'+(n?n:'Tất cả')+'</button>').join('');
+  const subs=S.subjects.filter(s=>vis.some(g=>g.subject===s));
+  vis.forEach(g=>{if(g.subject&&subs.indexOf(g.subject)<0)subs.push(g.subject);});
+  $('#subjChips').innerHTML=subs.length>1?'<b>Môn:</b>'+[''].concat(subs).map(s=>'<button class="chip'+(filt.subj===s?' on':'')+'" data-subj="'+esc(s)+'">'+(s?esc(s):'Tất cả')+'</button>').join(''):'';
+  const q=plain(filt.q).trim();
+  const list=vis.filter(g=>{
+    if(filt.grade&&g.grades.length&&g.grades.indexOf(filt.grade)<0)return false;
+    if(filt.subj&&g.subject!==filt.subj)return false;
+    if(q&&plain(g.title+' '+g.desc+' '+(g.tags||[]).join(' ')+' '+g.subject).indexOf(q)<0)return false;
+    return true;
+  });
+  const now=Date.now();
+  $('#grid').innerHTML=list.map(g=>{
+    const isNew=g.added&&(now-new Date(g.added).getTime())<14*864e5;
+    return '<a class="card" href="#play-'+encodeURIComponent(g.id)+'" style="--c:'+esc(g.color)+'">'+
+      '<div class="thumb">'+esc(g.icon)+(isNew?'<b class="new">Mới</b>':'')+'</div>'+
+      '<div class="cbody"><h3>'+esc(g.title)+'</h3>'+(g.desc?'<p>'+esc(g.desc)+'</p>':'')+'</div>'+
+      '<div class="meta"><span>'+esc(g.subject)+'</span>'+(g.grades.length?'<span>Lớp '+g.grades.join(', ')+'</span>':'<span>Mọi lớp</span>')+'</div>'+
+      '<span class="play">▶ Chơi</span></a>';
+  }).join('');
+  $('#empty').hidden=list.length>0;
+  $('#count').textContent=loaded||vis.length?list.length+' trò chơi':'';
+  if(!loaded&&!vis.length){$('#empty').innerHTML='<div>📂</div>Không đọc được file <b>games.js</b>. Hãy đặt file này cùng thư mục với trang.';}
+}
+$('#q').addEventListener('input',e=>{filt.q=e.target.value;renderHome();});
+$('#gradeChips').addEventListener('click',e=>{const b=e.target.closest('[data-grade]');if(b){filt.grade=+b.dataset.grade;renderHome();}});
+$('#subjChips').addEventListener('click',e=>{const b=e.target.closest('[data-subj]');if(b){filt.subj=b.dataset.subj;renderHome();}});
+
+/* ---------- player ---------- */
+/* A folder path such as "games/go-phim/" only opens index.html automatically on a web server;
+   when the kho is opened from files on a computer (offline) it shows the folder listing instead,
+   so always point straight at index.html for local folder paths. */
+function resolveUrl(u){
+  u=String(u||'').trim();
+  if(!u||/^[a-z][a-z0-9+.-]*:/i.test(u)||u.indexOf('//')===0)return u;
+  const m=u.match(/^([^?#]*)(.*)$/);let p=m[1];const rest=m[2];
+  if(p===''||p.slice(-1)==='/')p+='index.html';
+  else if(!/\.[a-z0-9]{2,5}$/i.test(p.split('/').pop()))p+='/index.html';
+  return p+rest;
+}
+function gameSrc(g){return temp[g.id]||resolveUrl(g.url);}
+function openPlay(g,from){
+  playFrom=from||'home';
+  $('#pTitle').textContent=g.icon+' '+g.title;
+  const src=gameSrc(g);
+  $('#pTmp').hidden=!temp[g.id];
+  $('#pNew').href=src;$('#pNew').hidden=!!temp[g.id];
+  showView('play');
+  const f=$('#frame');f.src=src;
+  f.onload=()=>{try{f.focus();}catch(e){}};
+}
+function closePlay(){
+  if(playFrom==='admin'){renderAdmin();showView('admin');}
+  else if(location.hash){location.hash='';}
+  else{renderHome();showView('home');}
+}
+$('#pBack').onclick=closePlay;
+$('#pReload').onclick=()=>{const f=$('#frame');const s=f.src;f.src='about:blank';setTimeout(()=>f.src=s,50);};
+$('#pFull').onclick=()=>{
+  const el=$('#viewPlay');
+  try{
+    if(document.fullscreenElement)document.exitFullscreen();
+    else{const p=el.requestFullscreen();if(p&&p.catch)p.catch(()=>toast('Nhấn phím F11 để xem toàn màn hình'));}
+  }catch(e){toast('Nhấn phím F11 để xem toàn màn hình');}
+};
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!$('#viewPlay').hidden&&!document.fullscreenElement)closePlay();
+});
+
+/* ---------- PIN ---------- */
+function askPin(){
+  if(isAdmin()){location.hash='quan-ly';return;}
+  if(!pub.settings.pin){ssSet('kho_admin','1');openAdmin();return;}
+  $('#pinIn').value='';$('#pinBox').hidden=false;setTimeout(()=>$('#pinIn').focus(),50);
+}
+function tryPin(){
+  if($('#pinIn').value===String(pub.settings.pin)){ssSet('kho_admin','1');$('#pinBox').hidden=true;openAdmin();}
+  else{toast('Mã PIN chưa đúng');$('#pinIn').select();}
+}
+$('#pinOk').onclick=tryPin;
+$('#pinIn').addEventListener('keydown',e=>{if(e.key==='Enter')tryPin();});
+$('#pinCancel').onclick=()=>{$('#pinBox').hidden=true;if(location.hash==='#quan-ly')location.hash='';};
+$('#btnAdmin').onclick=askPin;
+$('#btnHome').onclick=()=>{location.hash='';renderHome();showView('home');};
+function openAdmin(){if(location.hash!=='#quan-ly')location.hash='quan-ly';else{renderAdmin();showView('admin');}}
+
+/* ---------- admin ---------- */
+function saveDraft(){lsSet('kho_draft',JSON.stringify(cleanForExport(draft)));renderAdmin();}
+function isDirty(){return JSON.stringify(cleanForExport(draft))!==JSON.stringify(cleanForExport(pub));}
+function renderAdmin(){
+  const d=isDirty();
+  $('#dirty').className='dirty '+(d?'yes':'no');
+  $('#dirty').textContent=d?'● Có thay đổi chưa đưa lên site':'✓ Giống bản trên site';
+  $('#aCount').textContent='('+draft.games.length+' trò chơi)';
+  const S=draft.settings;
+  $('#sTitle').value=S.title;$('#sSub').value=S.subtitle;$('#sSubj').value=S.subjects.join(', ');$('#sPin').value=S.pin||'';
+  $('#aRows').innerHTML=draft.games.map((g,i)=>
+    '<tr class="'+(g.hidden?'off':'')+'"><td>'+(i+1)+'</td>'+
+    '<td><div class="ic" style="--c:'+esc(g.color)+'">'+esc(g.icon)+'</div></td>'+
+    '<td><div class="t">'+esc(g.title)+(g.hidden?' <span style="font-size:13px;color:#64748b">(đang ẩn)</span>':'')+'</div><div class="u">'+esc(g.url)+'</div>'+
+      (temp[g.id]?'<div class="warn">📎 File tạm từ máy này – nhớ tải file lên site: '+esc(fileTarget(g))+'</div>':'')+'</td>'+
+    '<td>'+(g.grades.length?g.grades.join(', '):'Mọi lớp')+'</td><td>'+esc(g.subject)+'</td>'+
+    '<td><div class="acts">'+
+      '<button class="btn sm ghost" data-a="up" data-i="'+i+'" title="Lên">▲</button>'+
+      '<button class="btn sm ghost" data-a="down" data-i="'+i+'" title="Xuống">▼</button>'+
+      '<button class="btn sm" data-a="play" data-i="'+i+'">▶ Thử</button>'+
+      '<button class="btn sm" data-a="edit" data-i="'+i+'">✏️ Sửa</button>'+
+      '<button class="btn sm" data-a="hide" data-i="'+i+'">'+(g.hidden?'👁 Hiện':'🙈 Ẩn')+'</button>'+
+      (temp[g.id]?'<button class="btn sm" data-a="dl" data-i="'+i+'" title="Tải file index.html của game">💾</button>':'')+
+      '<button class="btn sm red" data-a="del" data-i="'+i+'">🗑</button>'+
+    '</div></td></tr>').join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:#64748b">Chưa có trò chơi nào. Kéo thả file .html vào ô phía trên để thêm.</td></tr>';
+}
+function fileTarget(g){
+  if(/^https?:/i.test(g.url))return g.url;
+  let u=g.url.replace(/^\.?\//,'');
+  if(!u||u.slice(-1)==='/')u+='index.html';
+  return 'kho-game/'+u;
+}
+$('#aRows').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const i=+b.dataset.i,g=draft.games[i],a=b.dataset.a;
+  if(a==='up'&&i>0){[draft.games[i-1],draft.games[i]]=[draft.games[i],draft.games[i-1]];saveDraft();}
+  else if(a==='down'&&i<draft.games.length-1){[draft.games[i+1],draft.games[i]]=[draft.games[i],draft.games[i+1]];saveDraft();}
+  else if(a==='play')openPlay(g,'admin');
+  else if(a==='edit')openForm(i);
+  else if(a==='hide'){g.hidden=!g.hidden;saveDraft();}
+  else if(a==='dl')downloadText(g._html||'', 'index.html','text/html');
+  else if(a==='del'){if(await ask('Xóa "'+g.title+'" khỏi kho?')){draft.games.splice(i,1);saveDraft();toast('Đã xóa. Nhớ xuất games.js để cập nhật site.');}}
+});
+['sTitle','sSub','sSubj','sPin'].forEach(id=>$('#'+id).addEventListener('change',()=>{
+  const S=draft.settings;
+  S.title=$('#sTitle').value.trim()||BASE.settings.title;
+  S.subtitle=$('#sSub').value.trim();
+  const subs=$('#sSubj').value.split(',').map(s=>s.trim()).filter(Boolean);
+  S.subjects=subs.length?subs:BASE.settings.subjects.slice();
+  S.pin=$('#sPin').value.trim();
+  saveDraft();toast('Đã lưu cài đặt vào bản nháp');
+}));
+$('#aLock').onclick=()=>{ssSet('kho_admin',null);location.hash='';renderHome();showView('home');};
+$('#aReset').onclick=async()=>{
+  if(!isDirty()){toast('Không có thay đổi nào');return;}
+  if(await ask('Bỏ hết thay đổi chưa đưa lên site?')){draft=clone(pub);lsSet('kho_draft',null);renderAdmin();toast('Đã quay về bản trên site');}
+};
+
+/* ---------- form ---------- */
+$('#iconPicks').innerHTML=ICONS.map(i=>'<button type="button" data-ic="'+i+'">'+i+'</button>').join('');
+$('#iconPicks').addEventListener('click',e=>{const b=e.target.closest('[data-ic]');if(b)$('#fIcon').value=b.dataset.ic;});
+function drawColors(){$('#colorPicks').innerHTML=COLORS.map(c=>'<button type="button" class="col'+(c===formColor?' on':'')+'" style="background:'+c+'" data-col="'+c+'"></button>').join('');}
+$('#colorPicks').addEventListener('click',e=>{const b=e.target.closest('[data-col]');if(b){formColor=b.dataset.col;drawColors();}});
+function openForm(i){
+  editIdx=i;
+  const g=i>=0?draft.games[i]:{title:'',desc:'',url:'games/',icon:'🎮',color:COLORS[0],grades:[],subject:draft.settings.subjects[0],tags:[],hidden:false};
+  $('#fHead').textContent=i>=0?'Sửa trò chơi':'Thêm trò chơi';
+  $('#fTitle').value=g.title;$('#fDesc').value=g.desc;$('#fUrl').value=g.url;$('#fIcon').value=g.icon;
+  formColor=g.color;drawColors();
+  const subs=draft.settings.subjects.slice();if(g.subject&&subs.indexOf(g.subject)<0)subs.push(g.subject);
+  $('#fSubj').innerHTML=subs.map(s=>'<option'+(s===g.subject?' selected':'')+'>'+esc(s)+'</option>').join('');
+  $('#fGrades').innerHTML=[1,2,3,4,5].map(n=>'<label><input type="checkbox" value="'+n+'"'+(g.grades.indexOf(n)>=0?' checked':'')+'> Lớp '+n+'</label>').join('')+
+    '<span style="font-size:14px;color:#64748b">(không chọn = mọi lớp)</span>';
+  $('#fTags').value=(g.tags||[]).join(', ');$('#fHidden').checked=!!g.hidden;
+  $('#fFileNote').textContent=i>=0&&temp[g.id]?'📎 Game này đang dùng file tạm "'+(g._file||'')+'". Khi đưa lên site, đặt file đó vào: '+fileTarget(g):'';
+  $('#formBox').hidden=false;setTimeout(()=>$('#fTitle').focus(),50);
+}
+$('#aAdd').onclick=()=>openForm(-1);
+$('#fCancel').onclick=()=>{$('#formBox').hidden=true;};
+$('#fSave').onclick=()=>{
+  const title=$('#fTitle').value.trim(),url=$('#fUrl').value.trim();
+  if(!title){toast('Cần nhập tên trò chơi');$('#fTitle').focus();return;}
+  if(!url||url==='games/'){toast('Cần nhập đường dẫn tới game');$('#fUrl').focus();return;}
+  const old=editIdx>=0?draft.games[editIdx]:null;
+  const g=Object.assign(old||{id:uniqueId(slug(title)),added:today()},{
+    title,url,desc:$('#fDesc').value.trim(),icon:$('#fIcon').value.trim()||'🎮',color:formColor,
+    subject:$('#fSubj').value,grades:[...document.querySelectorAll('#fGrades input:checked')].map(x=>+x.value),
+    tags:$('#fTags').value.split(',').map(s=>s.trim()).filter(Boolean),hidden:$('#fHidden').checked});
+  if(!old)draft.games.unshift(g);
+  $('#formBox').hidden=true;saveDraft();toast('Đã lưu "'+title+'"');
+};
+function uniqueId(base){let id=base,n=2;while(draft.games.some(g=>g.id===id))id=base+'-'+(n++);return id;}
+
+/* ---------- add games from HTML files ---------- */
+function readText(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=rej;r.readAsText(file,'utf-8');});}
+async function addHtmlFiles(files){
+  const list=[...files].filter(f=>/\.html?$/i.test(f.name));
+  if(!list.length){toast('Hãy chọn file .html');return;}
+  let n=0;
+  for(const f of list){
+    let text='';try{text=await readText(f);}catch(e){continue;}
+    let title='';
+    try{const doc=new DOMParser().parseFromString(text,'text/html');title=(doc.title||'').trim();}catch(e){}
+    if(!title)title=f.name.replace(/\.html?$/i,'').replace(/[-_]+/g,' ');
+    const id=uniqueId(slug(title));
+    temp[id]=URL.createObjectURL(new Blob([text],{type:'text/html'}));
+    draft.games.unshift({id,title,desc:'',url:'games/'+id+'/',icon:'🎮',color:COLORS[n%COLORS.length],grades:[],
+      subject:draft.settings.subjects[0],tags:[],hidden:false,added:today(),_file:f.name,_html:text});
+    n++;
+  }
+  saveDraft();
+  toast('Đã thêm '+n+' trò chơi. Bấm ✏️ Sửa để chọn lớp, môn, biểu tượng.');
+  if(n===1)openForm(0);
+}
+const drop=$('#drop');
+drop.onclick=()=>$('#htmlFiles').click();
+$('#htmlFiles').onchange=e=>{addHtmlFiles(e.target.files);e.target.value='';};
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{if(e.dataTransfer&&e.dataTransfer.files)addHtmlFiles(e.dataTransfer.files);});
+
+/* ---------- import / export ---------- */
+function exportText(){
+  return '/* Danh sách trò chơi của Kho trò chơi.\n   Không cần sửa tay: vào trang Quản lý, chỉnh sửa rồi bấm "Xuất games.js" và thay file này. */\n'+
+    'window.KHO_GAME = '+JSON.stringify(cleanForExport(draft),null,2)+';\n';
+}
+function downloadText(text,name,type){
+  try{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([text],{type:(type||'text/javascript')+';charset=utf-8'}));
+    a.download=name;document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+  }catch(e){toast('Không tải được file – hãy dùng nút Sao chép');}
+}
+$('#aExport').onclick=()=>{
+  const t=exportText();
+  $('#exportText').value=t;$('#exportBox').hidden=false;
+  const tmp=draft.games.filter(g=>temp[g.id]);
+  $('#pending').textContent=tmp.length?'Nhớ tải lên cả file game: '+tmp.map(g=>(g._file||'')+' → '+fileTarget(g)).join(' · '):'';
+  downloadText(t,'games.js');
+  $('#exportBox').scrollIntoView({behavior:'smooth',block:'center'});
+};
+$('#copyExport').onclick=()=>{
+  const ta=$('#exportText');
+  const done=()=>toast('Đã sao chép nội dung games.js');
+  try{navigator.clipboard.writeText(ta.value).then(done,()=>{ta.select();document.execCommand('copy');done();});}
+  catch(e){ta.select();try{document.execCommand('copy');done();}catch(_){toast('Hãy bôi đen và nhấn Ctrl+C');}}
+};
+$('#aImport').onclick=()=>$('#importFile').click();
+$('#importFile').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{
+    const text=await readText(f);let obj;
+    try{obj=JSON.parse(text);}
+    catch(_){const a=text.indexOf('{'),b=text.lastIndexOf('}');obj=JSON.parse(text.slice(a,b+1));}
+    if(!obj||!Array.isArray(obj.games))throw new Error('x');
+    if(!(await ask('Thay danh sách hiện tại bằng nội dung file "'+f.name+'"?')))return;
+    draft=norm(obj);saveDraft();toast('Đã nhập '+draft.games.length+' trò chơi');
+  }catch(err){toast('File không đúng định dạng games.js');}
+};
+
+/* ---------- start ---------- */
+(async function init(){
+  let ok=await loadScript('games.js?v='+Date.now());
+  if(!ok||!window.KHO_GAME)ok=await loadScript('games.js');
+  if(window.KHO_GAME){pub=norm(window.KHO_GAME);loaded=true;}
+  const saved=lsGet('kho_draft');
+  draft=clone(pub);
+  if(saved){try{draft=norm(JSON.parse(saved));}catch(e){}}
+  if(!isDirty())lsSet('kho_draft',null);
+  route();
+})();
+})();
+</script>
+</body>
+</html>
